@@ -1,0 +1,13 @@
+<div >
+    <h2>A list of users:</h2>
+    <ul>
+        <% users.forEach(user => { %>
+            <li class="user-item">
+                <span class="username"><%= user.username %></span>
+                <form action="/users/delete/<%= user._id %>" method="POST" class="delete-form">
+                    <button type="submit" class="delete-button">Delete</button>
+                </form>
+            </li>
+        <% }); %>
+    </ul>
+</div>

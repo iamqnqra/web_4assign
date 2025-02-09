@@ -1,0 +1,24 @@
+{
+  "name": "assignment_4",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "dotenv": "^16.4.7",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "express-flash": "^0.0.2",
+    "express-session": "^1.18.1",
+    "mongodb": "^6.13.0",
+    "mongoose": "^8.9.6",
+    "multer": "^1.4.5-lts.1"
+  }
+}
