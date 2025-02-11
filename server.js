@@ -31,14 +31,15 @@ mongoose.connect(process.env.MONGO_URI)
     .catch(err => console.log('MongoDB Connection Error:', err));
 
 
-// User Model
-const UserSchema = new mongoose.Schema({
-    username: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
-    failedLoginAttempts: { type: Number, default: 0 },
-    isLocked: { type: Boolean, default: false }
-});
-const User = mongoose.model('User', UserSchema);
+    const UserSchema = new mongoose.Schema({
+        username: { type: String, required: true, unique: true },
+        password: { type: String, required: true },
+        age: { type: Number, default: null },
+        gender: { type: String, enum: ['male', 'female', 'other'], default: 'other' },
+        failedLoginAttempts: { type: Number, default: 0 },
+        isLocked: { type: Boolean, default: false }
+    });
+    const User = mongoose.model('User', UserSchema);
 
 // Ensure 'uploads' directory exists
 const uploadDir = path.join(__dirname, 'public/uploads');
@@ -209,6 +210,79 @@ app.post('/upload-avatar', upload.single('avatar'), async (req, res) => {
     res.redirect('/');
 });
 
+
+app.post('/delete-account', async (req, res) => {
+    if (!req.session || !req.session.user) {
+        return res.redirect('/login');
+    }
+
+    try {
+        await User.findByIdAndDelete(req.session.user._id);
+        
+        // Проверяем, существует ли сессия перед вызовом req.flash()
+        if (req.session) {
+            req.flash('success', 'Your account has been deleted.');
+        }
+
+        req.session.destroy(() => {
+            res.redirect('/register');
+        });
+    } catch (error) {
+        console.error('Error deleting account:', error);
+        
+        if (req.session) {
+            req.flash('error', 'Failed to delete account.');
+        }
+
+        res.redirect('/');
+    }
+});
+
+app.get('/edit-profile', (req, res) => {
+    if (!req.session.user) {
+        return res.redirect('/login');
+    }
+    res.render('edit-profile', { user: req.session.user });
+});
+app.get('/edit-profile', (req, res) => {
+    if (!req.session.user) {
+        return res.redirect('/login');
+    }
+    res.render('edit-profile', { user: req.session.user });
+});
+
+app.post('/edit-profile', async (req, res) => {
+    if (!req.session.user) {
+        return res.redirect('/login');
+    }
+
+    const { username, age, gender, password } = req.body;
+    const user = await User.findById(req.session.user._id);
+
+    if (!user) {
+        return res.redirect('/');
+    }
+
+    // Проверяем, что возраст в допустимом диапазоне
+    const parsedAge = parseInt(age, 10);
+    if (isNaN(parsedAge) || parsedAge < 1 || parsedAge > 120) {
+        req.flash('error', 'Age must be between 1 and 120.');
+        return res.redirect('/edit-profile');
+    }
+
+    user.username = username || user.username;
+    user.age = parsedAge;
+    user.gender = gender || user.gender;
+
+    if (password) {
+        user.password = await bcrypt.hash(password, 10);
+    }
+
+    await user.save();
+    req.session.user = user;
+
+    res.redirect('/');
+});
 
 
 // Start Server

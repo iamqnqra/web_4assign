@@ -1,20 +1,46 @@
-<h2>Welcome <% if (user) { %> 
-    <%= user.username %> !    
-    <img src="<%= user.avatar %>" alt="User Avatar" class="avatar">
-<% } %></h2>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
 
-<% if (!user) { %>
-    <div class="welcome-container">
-        <p>We're glad to have you here.</p>
-        <p>Login or <a href="/register" class="highlight">Register</a> to continue.</p>
-        <p>If you already have an account, <a href="/login" class="highlight">Login</a> instead.</p>
-        <p>Join our community and explore amazing features tailored just for you!</p>
-    </div>
-<% } else { %>
-    <form action="/upload-avatar" method="POST" enctype="multipart/form-data">
-        <label for="avatarInput" class="upload-label">Choose an image:</label>
-        <input type="file" name="avatar" id="avatarInput" required>
-        <button type="submit" class="upload-button">Upload an image</button>
-    </form>    
-<% } %>
+    <h2>Welcome <% if (user) { %> 
+        <%= user.username %> !    
+        <img src="<%= user.avatar %>" alt="User Avatar" class="avatar">
+    <% } %></h2>
 
+    <% if (!user) { %>
+        <div class="welcome-container">
+            <p>We're glad to have you here.</p>
+            <p>Login or <a href="/register" class="highlight">Register</a> to continue.</p>
+            <p>If you already have an account, <a href="/login" class="highlight">Login</a> instead.</p>
+        </div>
+    <% } else { %>
+        <div class="profile-container">
+
+            <form action="/upload-avatar" method="POST" enctype="multipart/form-data">
+                <label for="avatarInput" class="upload-label">Choose an image:</label>
+                <input type="file" name="avatar" id="avatarInput" required>
+                <button type="submit" class="upload-button">Upload an image</button>
+            </form>  
+
+            <p><strong>Username:</strong> <%= user.username %></p>
+            <p><strong>Age:</strong> <%= user.age || 'Not set' %></p>
+            <p><strong>Gender:</strong> <%= user.gender || 'Not set' %></p>
+
+            <a href="/edit-profile">
+                <button  class="upload-but" >Edit Profile</button>
+            </a>
+
+            <form action="/delete-account" method="POST">
+                <button type="submit" class="delete-account-button">Delete My Account</button>
+            </form>
+        </div>
+    <% } %>
+
+</body>
+</html>
