@@ -7,7 +7,7 @@ body {
     height: 100vh;
     margin: 0;
 }
-/* Обновленный стиль навигационного бара */
+
 nav {
     background: linear-gradient(90deg, #6a11cb, #2575fc);
     padding: 15px 20px;
@@ -82,11 +82,11 @@ input, button {
 .user-container {
     display: flex;
     align-items: center;
-    gap: 10px; /* Расстояние между текстом и аватаркой */
+    gap: 10px; 
 }
 
 .avatar {
-    width: 180px; /* Размер аватарки */
+    width: 180px;
     height: 170px;
     border-radius: 50%;
     object-fit: cover;
@@ -111,7 +111,7 @@ a {
 }
 
 a.highlight {
-    color:#4285F4; /* Цвет для выделения ссылки */
+    color:#4285F4;
 }
 
 a:hover {

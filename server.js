@@ -63,7 +63,7 @@ const uploadedPhotos = []; // Store uploaded photo paths
 // Routes
 app.get('/', (req, res) => {
     ejs.renderFile(__dirname + '/views/index.ejs', {
-        user: req.session.user || null, // Передаем user или null, если его нет
+        user: req.session.user || null, 
         messages: req.flash(),
         photos: uploadedPhotos
     }, (err, str) => {
@@ -73,7 +73,7 @@ app.get('/', (req, res) => {
 
 app.get('/login', (req, res) => {
     ejs.renderFile(__dirname + '/views/login.ejs', {
-        user: req.session.user || null, // Передаем user или null
+        user: req.session.user || null, 
         messages: req.flash()
     }, (err, str) => {
         res.render('layout', { body: str, user: req.session.user || null, messages: req.flash() });
@@ -82,7 +82,7 @@ app.get('/login', (req, res) => {
 
 app.get('/register', (req, res) => {
     ejs.renderFile(__dirname + '/views/register.ejs', {
-        user: req.session.user || null, // Передаем user или null
+        user: req.session.user || null, 
         messages: req.flash()
     }, (err, str) => {
         res.render('layout', { body: str, user: req.session.user || null, messages: req.flash() });
@@ -93,7 +93,6 @@ app.get('/register', (req, res) => {
 app.post('/register', async (req, res) => {
     const { username, password } = req.body;
 
-    // Проверка пароля: минимум 6 символов, хотя бы 1 буква и 1 цифра
     const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/;
     if (!passwordRegex.test(password)) {
         req.flash('error', 'Password must be at least 6 characters long, contain at least 1 letter and 1 number.');
@@ -152,21 +151,19 @@ app.post('/login', async (req, res) => {
 });
 
 app.get('/logout', (req, res) => {
-    const messages = req.flash('success', 'Logged out successfully.'); // Сохраняем flash-сообщение
+    const messages = req.flash('success', 'Logged out successfully.'); 
 
     req.session.destroy((err) => {
         if (err) {
             console.error("Error destroying session:", err);
-            return res.redirect('/'); // Если ошибка, перенаправляем на главную
+            return res.redirect('/'); 
         }
-        // Передаём flash через сессию, чтобы оно сохранилось после удаления
         req.session = null;
         req.sessionFlash = messages;
         res.redirect('/login');
     });
 });
 
-// Middleware для сохранения flash-сообщений после уничтожения сессии
 app.use((req, res, next) => {
     if (req.sessionFlash) {
         req.flash('success', req.sessionFlash);
@@ -219,7 +216,6 @@ app.post('/delete-account', async (req, res) => {
     try {
         await User.findByIdAndDelete(req.session.user._id);
         
-        // Проверяем, существует ли сессия перед вызовом req.flash()
         if (req.session) {
             req.flash('success', 'Your account has been deleted.');
         }
@@ -263,7 +259,6 @@ app.post('/edit-profile', async (req, res) => {
         return res.redirect('/');
     }
 
-    // Проверяем, что возраст в допустимом диапазоне
     const parsedAge = parseInt(age, 10);
     if (isNaN(parsedAge) || parsedAge < 1 || parsedAge > 120) {
         req.flash('error', 'Age must be between 1 and 120.');
@@ -284,7 +279,5 @@ app.post('/edit-profile', async (req, res) => {
     res.redirect('/');
 });
 
-
-// Start Server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
